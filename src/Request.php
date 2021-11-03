@@ -83,7 +83,7 @@ class Request
      * */
     protected function headers(){
         $this->headers=[
-            'Content-Type' => 'application/json',
+
         ];
     }
 
@@ -112,7 +112,7 @@ class Request
         $client = new \GuzzleHttp\Client();
         $url=$this->host.$this->path;
 
-        if($this->type=='GET') $url.= '?'.http_build_query($this->data).($this->signature!=''?'&sign='.$this->signature:'');
+        if($this->type=='GET'||$this->type=='DELETE') $url.= '?'.http_build_query($this->data).($this->signature!=''?'&sign='.$this->signature:'');
         else {
             $temp=$this->data;
 
@@ -121,7 +121,10 @@ class Request
                 if($v=='false') $temp[$k]=false;
             }
 
-            $this->options['body']=json_encode(array_merge($temp,['sign'=>$this->signature]));
+            $this->options['form_params'] = array_merge($temp,['sign'=>$this->signature]);
+
+            //$this->options['body']=json_encode();
+
         }
 
         $response = $client->request($this->type, $url, $this->options);
